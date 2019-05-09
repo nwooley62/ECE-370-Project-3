@@ -1,0 +1,21 @@
+
+INSTALL_DIR= $HOME/Project
+CURRENT_DIY=$(pwd)
+INSTALL_FILE=Project3.py
+
+DoInstall(){
+	sudo mkdir -p $INSTALL_DIR
+	suco cp $INSTALL_FILE $INSTALL DIR
+}
+DoStart(){
+	python $INSTALL_DIR/$INSTALL_FILE
+}
+DoStop(){
+	screen -S $SCREEN_UDP -p 0 -x quit
+}
+ShowUsage(){
+	echo 'start - starts the program'
+	echo 'stop - stops the program'
+	echo 'install - installs the program'
+	echo 'uninstall - uninstalls the program'
+}
