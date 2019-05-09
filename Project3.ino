@@ -18,7 +18,8 @@
 //ODOMETRY CONSTANTS
 float circBase = 2*PI*(BASELINE);
 float circWheel = 2*PI*(RADIUS);
-float tickDistance = circWheel/(75.8*2);
+float tickDistance = circWheel/(75.8);
+//float tickRadians = tickDistance/ BASELINE;
 float phiTick = (PI*tickDistance)/(circBase);
 float deltaX = (BASELINE/2)*sin(phiTick);
 float deltaY = (BASELINE/2) - (BASELINE/2)*cos(phiTick);
@@ -30,6 +31,7 @@ int status = WL_IDLE_STATUS;
 int keyIndex = 0;
 
 //UDP OBJECTS
+
 unsigned int localPort = 4242; 
 WiFiUDP Udp;
 int t1, t2;
@@ -93,12 +95,10 @@ void setup() {
   IMUsetup();
   
   velocity = 0;
-  checkIMU();
-  thetaGlobalDeg = IMUheading;
-  thetaGlobalRad = thetaGlobalDeg / (180/PI);
-  phiDesired = IMUheading;
-  t1 = millis();
-  t2 = t1;
+  //checkIMU();
+  //thetaGlobalDeg = IMUheading;
+  //thetaGlobalRad = thetaGlobalDeg / (180/PI);
+  //phiDesired = IMUheading;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void loop() {
@@ -108,7 +108,7 @@ void loop() {
    checkIMU();
    pickupBot();
    setMotor();
-   checkTheta();
+   //checkTheta();
    
 //   setMotorLeft(velocity);
 //   setMotorRight(velocity);
@@ -127,7 +127,8 @@ void loop() {
 }
 }
 void checkTheta(){
-  thetaGlobalRad = (0.2*thetaGlobalDeg + 0.8*IMUheading) / (180/PI);
+  //thetaGlobalRad = IMUheading;
+  //(0.2*thetaGlobalDeg + 0.8*IMUheading) / (180/PI);
   
   if(thetaGlobalRad >= (2*PI)){
     thetaGlobalRad -= (2 * PI);
@@ -206,8 +207,8 @@ void IMUsetup(){
   Wire.begin();
   compass.init();
   compass.enableDefault();
-  compass.m_min = (LSM303::vector<int16_t>){-1312, +2858, -3905};
-  compass.m_max = (LSM303::vector<int16_t>){+3731, +5442, -174};
+  compass.m_min = (LSM303::vector<int16_t>){-1641, +1671, -3155};
+  compass.m_max = (LSM303::vector<int16_t>){+941, +2586, -456};
   Serial.println("IMU Setup");
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -265,7 +266,7 @@ void readPacket(){
       robotMode = 4;
       xGlobal = 0;
       yGlobal = 0;
-      thetaGlobalDeg = IMUheading;
+      //thetaGlobalDeg = IMUheading;
      }
 
   }
@@ -300,7 +301,7 @@ void writePacket(){
 void pickupBot(){
   //set motor speed to 0
   //set bool picup to true
-  int threshold = 28000;
+  int threshold = 22000;
   if(compass.a.z > threshold){
     pickup = true;
     Serial.println("Picked Up");
@@ -310,6 +311,7 @@ void pickupBot(){
 void checkIMU(){
   compass.read();
   IMUheading = compass.heading((LSM303::vector<int>){-1, 0, 0});
+  //thetaGlobalDeg = IMUheading;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void doTickLeft(){
